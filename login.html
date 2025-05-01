@@ -1,0 +1,95 @@
+<!-- File: templates/login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - IV Monitoring System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+            width: 350px;
+        }
+        h2 {
+            text-align: center;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label, input, select {
+            margin: 10px 0;
+        }
+        input[type="text"], input[type="password"], select {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #4285f4;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #3273dc;
+        }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <h2>Login</h2>
+    <form action="/login" method="post">
+        <label for="role">Login as:</label>
+        <select name="role" id="role" onchange="toggleFields()">
+            <option value="staff">Hospital Staff</option>
+            <option value="patient">Patient</option>
+        </select>
+
+        <div id="staff-fields">
+            <label for="username">Username:</label>
+            <input type="text" name="username" required>
+
+            <label for="password">Password:</label>
+            <input type="password" name="password" required>
+        </div>
+
+        <div id="patient-fields" style="display: none;">
+            <label for="patient_id">Patient ID:</label>
+            <input type="text" name="patient_id" placeholder="Enter your Patient ID">
+        </div>
+
+        <button type="submit">Login</button>
+    </form>
+</div>
+
+<script>
+    function toggleFields() {
+        const role = document.getElementById("role").value;
+        const staffFields = document.getElementById("staff-fields");
+        const patientFields = document.getElementById("patient-fields");
+
+        if (role === "staff") {
+            staffFields.style.display = "block";
+            patientFields.style.display = "none";
+        } else {
+            staffFields.style.display = "none";
+            patientFields.style.display = "block";
+        }
+    }
+</script>
+</body>
+</html>

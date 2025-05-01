@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Patient Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(to right, #4facfe, #00f2fe);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .dashboard-card {
+      background: white;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .dashboard-card h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    .fluid-level {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .fluid-bar {
+      height: 30px;
+      border-radius: 20px;
+      background-color: #e0e0e0;
+      margin-top: 10px;
+    }
+
+    .fluid-fill {
+      height: 100%;
+      border-radius: 20px;
+      transition: width 0.5s ease;
+    }
+
+    .fluid-status {
+      text-align: center;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-card">
+    <h2>Patient Dashboard</h2>
+
+    <div class="fluid-level">
+      <h3>IV Fluid Level</h3>
+      <div class="fluid-bar">
+        <div id="fluid-fill" class="fluid-fill" style="width: 100%; background-color: #76d7c4;"></div>
+      </div>
+      <p id="fluid-status">100% remaining</p>
+    </div>
+
+    <br>
+    <button onclick="window.location.href='/logout'">Logout</button>
+  </div>
+
+  <script>
+    function updateFluidLevel() {
+      setInterval(() => {
+        fetch('/get_fluid_level')
+          .then(response => response.json())
+          .then(data => {
+            const fluidPercentage = data.percent;
+            const fluidRemaining = data.ml;
+            document.getElementById("fluid-fill").style.width = fluidPercentage + "%";
+            document.getElementById("fluid-status").innerText = `${fluidPercentage}% remaining`;
+            if (fluidPercentage <= 0) {
+              clearInterval(fluidLevelInterval);
+            }
+          });
+      }, 1000);
+    }
+
+    updateFluidLevel();
+  </script>
+</body>
+</html>

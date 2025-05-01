@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>IV Monitoring - Staff Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        header {
+            background-color: #005f73;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        nav {
+            background-color: #0a9396;
+            display: flex;
+            justify-content: center;
+            padding: 15px 0;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 25px;
+            font-size: 16px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        nav a:hover {
+            background-color: #94d2bd;
+            color: #000;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #0077b6;
+        }
+
+        .patient-info, .fluid-status {
+            margin-top: 30px;
+        }
+
+        .label {
+            font-weight: bold;
+            display: inline-block;
+            width: 150px;
+        }
+
+        .fluid-bar-container {
+            background: #eee;
+            border-radius: 20px;
+            overflow: hidden;
+            height: 25px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .fluid-bar {
+            background-color: #00b4d8;
+            height: 100%;
+            width: 100%; /* Starts full */
+            transition: width 0.5s ease-in-out;
+        }
+
+        button {
+            background-color: #0077b6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            margin-top: 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #023e8a;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Staff Dashboard</h1>
+</header>
+
+<nav>
+    <a href="/new_patient">New Patient</a>
+    <a href="/existing_patient">Existing Patient</a>
+    <a href="/view_history">Patient History</a>
+    <a href="/">Logout</a>
+</nav>
+
+<div class="container">
+    <h2>IV Monitoring System - Patient Overview</h2>
+
+    {% if patient %}
+    <div class="patient-info">
+        <p><span class="label">Patient ID:</span> {{ patient[0] }}</p>
+        <p><span class="label">Name:</span> {{ patient[1] }}</p>
+        <p><span class="label">Age:</span> {{ patient[2] }}</p>
+        <p><span class="label">Gender:</span> {{ patient[3] }}</p>
+        <p><span class="label">Condition:</span> {{ patient[4] }}</p>
+    </div>
+
+    <div class="fluid-status">
+        <h3>Fluid Level</h3>
+        <div class="fluid-bar-container">
+            <div class="fluid-bar" id="fluid-bar" style="width: 100%;"></div>
+        </div>
+        <p id="fluid-percentage">100%</p>
+    </div>
+
+    <form method="POST" action="/start_monitoring">
+        <input type="hidden" name="patient_id" value="{{ patient[0] }}">
+        <button type="submit">Start Monitoring</button>
+    </form>
+    {% else %}
+    <p>No patient selected. Please select or register a patient.</p>
+    {% endif %}
+</div>
+
+<script>
+    // Optional: Fake fluid level simulation
+    let percentage = 100;
+    function reduceFluidLevel() {
+        if (percentage > 0) {
+            percentage -= 1;
+            document.getElementById("fluid-bar").style.width = percentage + "%";
+            document.getElementById("fluid-percentage").innerText = percentage + "%";
+        }
+    }
+
+    // Simulate decrease every 1 second after starting monitoring
+    {% if patient %}
+    setInterval(reduceFluidLevel, 1000);
+    {% endif %}
+</script>
+
+</body>
+</html>

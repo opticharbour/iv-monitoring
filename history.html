@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treatment History</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #d4fc79, #96e6a1);
+            margin: 0;
+            padding: 30px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .nav-links {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .nav-links a {
+            margin: 0 15px;
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Patient Treatment History</h2>
+
+        <table>
+            <tr>
+                <th>Patient Name</th>
+                <th>Date</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Notes</th>
+            </tr>
+            <tr>
+                <td>John Doe</td>
+                <td>2025-04-20</td>
+                <td>10:00 AM</td>
+                <td>12:15 PM</td>
+                <td>No issues</td>
+            </tr>
+            <tr>
+                <td>Jane Smith</td>
+                <td>2025-04-19</td>
+                <td>2:30 PM</td>
+                <td>4:00 PM</td>
+                <td>1 bubble detected</td>
+            </tr>
+        </table>
+
+        <div class="nav-links">
+            <a href="{{ url_for('dashboard_staff') }}">Back to Dashboard</a>
+            <a href="{{ url_for('login') }}">Logout</a>
+        </div>
+    </div>
+</body>
+</html>

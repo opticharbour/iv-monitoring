@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>IV Monitoring Interface</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f8f9fa;
+            padding-top: 40px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .container {
+            max-width: 1000px;
+        }
+        .fluid-indicator {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: conic-gradient(#007bff var(--percent), #e9ecef 0%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #007bff;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">IV Monitoring Interface</h3>
+        </div>
+        <div class="card-body">
+
+            <div class="mb-4">
+                <h5>Patient Info</h5>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><strong>ID:</strong> {{ patient[0] }}</li>
+                    <li class="list-group-item"><strong>Name:</strong> {{ patient[1] }}</li>
+                    <li class="list-group-item"><strong>Age:</strong> {{ patient[2] }}</li>
+                    <li class="list-group-item"><strong>Gender:</strong> {{ patient[3] }}</li>
+                    <li class="list-group-item"><strong>Condition:</strong> {{ patient[4] }}</li>
+                </ul>
+            </div>
+
+            <div class="text-center mb-4">
+                <h5>Fluid Level</h5>
+                <div class="fluid-indicator" id="fluidLevel" style="--percent: 100%">
+                    <span id="fluidText">100%</span>
+                </div>
+                <button class="btn btn-success mt-3" onclick="startMonitoring()">Start Monitoring</button>
+            </div>
+
+            <div class="mt-4">
+                <h5>Patient History</h5>
+                {% if history %}
+                    <ul class="list-group">
+                        {% for h in history %}
+                            <li class="list-group-item">
+                                <strong>Date:</strong> {{ h[2] }} |
+                                <strong>Status:</strong> {{ h[3] }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted">No history found.</p>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    let fluidLevel = 100;
+    let interval = null;
+
+    function startMonitoring() {
+        if (interval) return;  // Already running
+        interval = setInterval(() => {
+            if (fluidLevel > 0) {
+                fluidLevel -= 1;
+                document.getElementById('fluidLevel').style.setProperty('--percent', fluidLevel + '%');
+                document.getElementById('fluidText').innerText = fluidLevel + '%';
+            } else {
+                clearInterval(interval);
+                interval = null;
+                alert("IV fluid has depleted!");
+            }
+        }, 1000); // Decreases every second
+    }
+</script>
+
+</body>
+</html>

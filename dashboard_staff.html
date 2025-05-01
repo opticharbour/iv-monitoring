@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Staff Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(to right, #4facfe, #00f2fe);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .dashboard-card {
+      background: white;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .dashboard-card h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    .fluid-level {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .fluid-bar {
+      height: 30px;
+      border-radius: 20px;
+      background-color: #e0e0e0;
+      margin-top: 10px;
+    }
+
+    .fluid-fill {
+      height: 100%;
+      border-radius: 20px;
+      transition: width 0.5s ease;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    button {
+      background-color: #4facfe;
+      border: none;
+      padding: 10px 20px;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #00c6ff;
+    }
+
+    .input-field {
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-card">
+    <h2>Staff Dashboard</h2>
+
+    <div id="patient-selection">
+      <h3>Select Patient:</h3>
+      <button onclick="newPatient()">New Patient</button>
+      <button onclick="existingPatient()">Existing Patient</button>
+    </div>
+
+    <div id="new-patient-form" style="display:none;">
+      <h3>Enter New Patient Details</h3>
+      <form id="new-patient-form">
+        <div class="input-field">
+          <label>Name:</label>
+          <input type="text" id="patient-name" required>
+        </div>
+        <div class="input-field">
+          <label>Mobile Number:</label>
+          <input type="text" id="patient-mobile" required>
+        </div>
+        <div class="input-field">
+          <label>Blood Group:</label>
+          <input type="text" id="patient-bloodgroup" required>
+        </div>
+        <div class="input-field">
+          <label>Case Description:</label>
+          <textarea id="patient-case" required></textarea>
+        </div>
+        <button type="button" onclick="submitNewPatient()">Submit</button>
+      </form>
+    </div>
+
+    <div id="patient-dashboard" style="display:none;">
+      <div class="fluid-level">
+        <h3>IV Fluid Level</h3>
+        <div class="fluid-bar">
+          <div id="fluid-fill" class="fluid-fill" style="width: 100%; background-color: #76d7c4;"></div>
+        </div>
+        <p id="fluid-status">100% remaining</p>
+      </div>
+
+      <div class="button-group">
+        <button onclick="startMonitoring()">Start Monitoring</button>
+        <button onclick="stopMonitoring()">Stop Monitoring</button>
+      </div>
+
+      <div id="patient-details">
+        <h4>Patient Details:</h4>
+        <p>Name: <span id="patient-name-display"></span></p>
+        <p>Mobile: <span id="patient-mobile-display"></span></p>
+        <p>Blood Group: <span id="patient-bloodgroup-display"></span></p>
+        <p>Case: <span id="patient-case-display"></span></p>
+      </div>
+
+      <br>
+      <button onclick="window.location.href='/logout'">Logout</button>
+    </div>
+
+  </div>
+
+  <script>
+    let monitoring = false;
+
+    function newPatient() {
+      document.getElementById('patient-selection').style.display = 'none';
+      document.getElementById('new-patient-form').style.display = 'block';
+    }
+
+    function existingPatient() {
+      alert("Existing patient option will be implemented later.");
+    }
+
+    function submitNewPatient() {
+      const name = document.getElementById('patient-name').value;
+      const mobile = document.getElementById('patient-mobile').value;
+      const bloodgroup = document.getElementById('patient-bloodgroup').value;
+      const patientCase = document.getElementById('patient-case').value;
+
+      // Submit to server or save to database (for now, we'll just mock this)
+      const patientData = {
+        name: name,
+        mobile: mobile,
+        bloodgroup: bloodgroup,
+        case: patientCase
+      };
+
+      // Store data temporarily in sessionStorage for demo purposes
+      sessionStorage.setItem('patientData', JSON.stringify(patientData));
+
+      // Hide the new patient form and show the monitoring interface
+      document.getElementById('new-patient-form').style.display = 'none';
+      document.getElementById('patient-dashboard').style.display = 'block';
+
+      // Populate patient details on the dashboard
+      document.getElementById('patient-name-display').innerText = name;
+      document.getElementById('patient-mobile-display').innerText = mobile;
+      document.getElementById('patient-bloodgroup-display').innerText = bloodgroup;
+      document.getElementById('patient-case-display').innerText = patientCase;
+    }
+
+    function startMonitoring() {
+      monitoring = true;
+      fetch('/start_monitoring').then(response => {
+        if (response.status === 204) {
+          updateFluidLevel();
+        }
+      });
+    }
+
+    function stopMonitoring() {
+      monitoring = false;
+      fetch('/stop_monitoring').then(response => {
+        if (response.status === 204) {
+          clearInterval(fluidLevelInterval);
+        }
+      });
+    }
+
+    let fluidLevelInterval;
+
+    function updateFluidLevel() {
+      fluidLevelInterval = setInterval(() => {
+        fetch('/get_fluid_level')
+          .then(response => response.json())
+          .then(data => {
+            const fluidPercentage = data.percent;
+            const fluidRemaining = data.ml;
+            document.getElementById("fluid-fill").style.width = fluidPercentage + "%";
+            document.getElementById("fluid-status").innerText = `${fluidPercentage}% remaining`;
+            if (fluidPercentage <= 0) {
+              clearInterval(fluidLevelInterval);
+            }
+          });
+      }, 1000);
+    }
+  </script>
+</body>
+</html>
